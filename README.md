@@ -202,21 +202,6 @@ Execute the SQL file containing:
 
 ---
 
-# 📂 Project Structure
-
-```text
-school-database/
-│
-├── schema.sql
-├── data.sql
-├── views.sql
-├── triggers.sql
-├── users_permissions.sql
-└── README.md
-```
-
----
-
 # 🔐 Security Features
 
 - Restricted database access
@@ -229,9 +214,9 @@ school-database/
 
 # 👨‍💻 Authors
 
-Muhammad Yousuf
-Talha Shahzad
-Muhammad Umar
+- Muhammad Yousuf
+- Talha Shahzad
+- Muhammad Umar
 ---
 
 # ⭐ Notes
