@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Subjects{% endblock %}
+{% block page_title %}Subjects{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="breadcrumb">
+      <a href="{{ url_for('dashboard') }}">Home</a>
+      <i class="fas fa-chevron-right" style="font-size:10px;"></i> Subjects
+    </div>
+    <h1><i class="fas fa-book"></i> Subjects</h1>
+  </div>
+  {% if 'write' in permissions %}
+  <a href="{{ url_for('subjects_add') }}" class="btn btn-primary">
+    <i class="fas fa-plus"></i> Add Subject
+  </a>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr><th>ID</th><th>Subject Name</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for s in subjects %}
+        <tr>
+          <td><span class="badge badge-secondary">#{{ s.subject_id }}</span></td>
+          <td>
+            <div class="d-flex align-center gap-2">
+              <span style="width:32px;height:32px;background:var(--primary-light);
+                           border-radius:8px;display:flex;align-items:center;
+                           justify-content:center;font-size:14px;">📖</span>
+              <strong>{{ s.subject_name }}</strong>
+            </div>
+          </td>
+          <td>
+            <div class="action-btns">
+              {% if 'update' in permissions %}
+              <a href="{{ url_for('subjects_edit', sid=s.subject_id) }}"
+                 class="btn btn-warning btn-sm btn-icon"><i class="fas fa-edit"></i></a>
+              {% endif %}
+              {% if 'delete' in permissions %}
+              <form id="del-sub-{{ s.subject_id }}" method="POST"
+                    action="{{ url_for('subjects_delete', sid=s.subject_id) }}">
+                <button type="button" class="btn btn-danger btn-sm btn-icon"
+                        onclick="confirmDelete('del-sub-{{ s.subject_id }}','{{ s.subject_name }}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3" class="table-empty">No subjects found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

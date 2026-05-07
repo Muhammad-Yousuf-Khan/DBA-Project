@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Edit Fee{% endblock %}
+{% block page_title %}Edit Fee{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="breadcrumb">
+      <a href="{{ url_for('dashboard') }}">Home</a>
+      <i class="fas fa-chevron-right" style="font-size:10px;"></i>
+      <a href="{{ url_for('fees_list') }}">Fees</a>
+      <i class="fas fa-chevron-right" style="font-size:10px;"></i> Edit
+    </div>
+    <h1><i class="fas fa-file-invoice-dollar"></i> Edit Fee Record #{{ fee.fee_id }}</h1>
+    <p>Update fee details for <strong>{{ fee.first_name }} {{ fee.last_name or '' }}</strong></p>
+  </div>
+  <a href="{{ url_for('fees_list') }}" class="btn btn-secondary">
+    <i class="fas fa-arrow-left"></i> Back to Fees
+  </a>
+</div>
+
+<div class="card" style="max-width:700px;">
+  <div class="card-header">
+    <div class="card-title">
+      <i class="fas fa-edit"></i> Update Fee Details
+    </div>
+    <span class="badge {% if fee.status == 'paid' %}badge-success{% else %}badge-danger{% endif %}">
+      Current: {{ fee.status | upper }}
+    </span>
+  </div>
+  <div class="card-body">
+
+    <!-- Student Info (readonly display) -->
+    <div style="background:#f8fafc;border:1px solid var(--border);border-radius:10px;
+                padding:16px;margin-bottom:24px;">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);
+                  text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px;">
+        <i class="fas fa-user-graduate"></i> &nbsp;Student Info
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+        <div>
+          <div style="font-size:11px;color:var(--muted);">Student ID</div>
+          <div style="font-weight:600;">#{{ fee.student_id }}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);">Name</div>
+          <div style="font-weight:600;">{{ fee.first_name }} {{ fee.last_name or '' }}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--muted);">Class</div>
+          <div style="font-weight:600;">{{ fee.class_name or '—' }}</div>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">
+            Amount (PKR) <span class="required">*</span>
+          </label>
+          <input type="number" name="amount" class="form-control"
+                 value="{{ fee.amount }}" step="0.01" min="0" required/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Due Date</label>
+          <input type="date" name="due_date" class="form-control"
+                 value="{{ fee.due_date or '' }}"/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Paid Date</label>
+          <input type="date" name="paid_date" class="form-control"
+                 value="{{ fee.paid_date or '' }}"/>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">
+            Status <span class="required">*</span>
+          </label>
+          <select name="status" class="form-control" required>
+            <option value="unpaid"
+              {% if fee.status == 'unpaid' %}selected{% endif %}>
+              Unpaid
+            </option>
+            <option value="paid"
+              {% if fee.status == 'paid' %}selected{% endif %}>
+              Paid
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Quick Pay Button -->
+      {% if fee.status == 'unpaid' %}
+      <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:8px;
+                  padding:14px;margin:20px 0;display:flex;
+                  align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-weight:600;color:#166534;font-size:13px;">
+            <i class="fas fa-bolt"></i> Quick Action
+          </div>
+          <div style="font-size:12px;color:#166534;">
+            Mark this fee as paid with today's date
+          </div>
+        </div>
+        <button type="button" class="btn btn-success"
+                onclick="quickPay()">
+          <i class="fas fa-check-circle"></i> Mark as Paid Now
+        </button>
+      </div>
+      {% endif %}
+
+      <div class="d-flex gap-2 mt-3">
+        <button type="submit" class="btn btn-warning">
+          <i class="fas fa-save"></i> Update Fee
+        </button>
+        <a href="{{ url_for('fees_list') }}" class="btn btn-secondary">
+          Cancel
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function quickPay() {
+  const today = new Date().toISOString().split('T')[0];
+  document.querySelector('[name="paid_date"]').value = today;
+  document.querySelector('[name="status"]').value    = 'paid';
+
+  // Visual feedback
+  const btn = event.target;
+  btn.innerHTML = '<i class="fas fa-check"></i> Done! Save to confirm.';
+  btn.style.background = '#059669';
+}
+</script>
+{% endblock %}

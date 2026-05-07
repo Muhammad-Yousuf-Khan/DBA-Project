@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block page_title %}Students{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-header-left">
+    <div class="breadcrumb">
+      <a href="{{ url_for('dashboard') }}">Home</a>
+      <i class="fas fa-chevron-right" style="font-size:10px;"></i> Students
+    </div>
+    <h1><i class="fas fa-user-graduate"></i> Students</h1>
+    <p>Manage all student records</p>
+  </div>
+  {% if 'write' in permissions %}
+  <a href="{{ url_for('students_add') }}" class="btn btn-primary">
+    <i class="fas fa-user-plus"></i> Add Student
+  </a>
+  {% endif %}
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <form method="GET" class="search-bar">
+      <div class="search-input-wrap">
+        <i class="fas fa-search search-icon"></i>
+        <input type="text" name="search" class="form-control"
+               placeholder="Search by name..." value="{{ search }}"/>
+      </div>
+      <select name="status" class="form-control" style="width:140px;">
+        <option value="">All Status</option>
+        <option value="active"   {% if status=='active' %}selected{% endif %}>Active</option>
+        <option value="inactive" {% if status=='inactive' %}selected{% endif %}>Inactive</option>
+      </select>
+      <button type="submit" class="btn btn-primary">
+        <i class="fas fa-search"></i> Search
+      </button>
+      <a href="{{ url_for('students_list') }}" class="btn btn-secondary">
+        <i class="fas fa-undo"></i> Reset
+      </a>
+    </form>
+    <span class="badge badge-primary" style="margin-left:auto;">
+      {{ students|length }} records
+    </span>
+  </div>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th><th>Name</th><th>Gender</th>
+          <th>Date of Birth</th><th>Class</th>
+          <th>Admission Date</th><th>Status</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in students %}
+        <tr>
+          <td><span class="badge badge-secondary">#{{ s.student_id }}</span></td>
+          <td><strong>{{ s.first_name }} {{ s.last_name or '' }}</strong></td>
+          <td>
+            <span class="badge {% if s.gender=='Male' %}badge-info{% else %}badge-primary{% endif %}">
+              {{ s.gender or '—' }}
+            </span>
+          </td>
+          <td>{{ s.date_of_birth or '—' }}</td>
+          <td><span class="badge badge-secondary">{{ s.class_name or '—' }}</span></td>
+          <td>{{ s.admission_date or '—' }}</td>
+          <td>
+            <span class="badge {% if s.status=='active' %}badge-success{% else %}badge-danger{% endif %}">
+              {{ s.status }}
+            </span>
+          </td>
+          <td>
+            <div class="action-btns">
+              {% if 'update' in permissions %}
+              <a href="{{ url_for('students_edit', sid=s.student_id) }}"
+                 class="btn btn-warning btn-sm btn-icon" title="Edit">
+                <i class="fas fa-edit"></i>
+              </a>
+              {% endif %}
+              {% if 'delete' in permissions %}
+              <form id="del-s-{{ s.student_id }}" method="POST"
+                    action="{{ url_for('students_delete', sid=s.student_id) }}">
+                <button type="button" class="btn btn-danger btn-sm btn-icon"
+                        title="Delete"
+                        onclick="confirmDelete('del-s-{{ s.student_id }}',
+                                 '{{ s.first_name }} {{ s.last_name }}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </form>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="8" class="table-empty">
+          <i class="fas fa-inbox" style="font-size:32px;color:var(--border);"></i>
+          <br>No students found
+        </td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

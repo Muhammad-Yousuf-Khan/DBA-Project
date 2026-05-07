@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>403 — Access Denied</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+</head>
+<body style="background:var(--bg);display:flex;align-items:center;
+             justify-content:center;min-height:100vh;">
+  <div class="error-page">
+    <div style="font-size:80px;">🔒</div>
+    <div class="error-code">403</div>
+    <div class="error-title">Access Denied</div>
+    <div class="error-desc">
+      You don't have permission to perform this action.<br>
+      Your role: <strong>{{ current_role }}</strong>
+    </div>
+    <a href="javascript:history.back()" class="btn btn-primary">
+      ← Go Back
+    </a>
+  </div>
+</body>
+</html>
